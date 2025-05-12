@@ -1,0 +1,132 @@
+# 	Runtime parameters for the Hydro supersonic jet problem
+
+#	Specific heats ratio
+gamma		= 1.67
+
+
+#       Grid dimensionality and geometry
+geometry	= "cartesian"
+
+
+#       Size of computational volume
+#xmin		= -0.5
+#xmax		=  0.5 
+#ymin		= -0.75
+#ymax		=  0.75
+#zmin		= -0.5
+#zmax		=  0.5
+
+xmin		= -0.75
+xmax		=  0.75 
+ymin		= -0.5
+ymax		=  0.5
+
+
+#       Boundary conditions
+xl_boundary_type = "user"
+xr_boundary_type = "outflow"
+yl_boundary_type = "outflow"
+yr_boundary_type = "outflow"
+zl_boundary_type = "outflow"
+zr_boundary_type = "outflow"
+
+
+#	Parameters for initial model
+#	Density, pressure, and velocity
+#	initial values on either side of the interface
+d_ambient	= 1.
+p_ambient	= 1.
+u_ambient	= 0.
+v_ambient	= 0.
+w_ambient	= 0.
+
+jetRadius	= 0.1
+jetXCtr		= 0.0 #-0.75
+jetYCtr	  	= 0.0
+jetZCtr		= 0.0
+jetDensity	= 0.1
+jetVelocity	= 80.
+
+#       Simulation (grid, time, I/O) parameters
+run_comment	= "Supersonic Jet problem"
+
+restart         = .false.
+#checkPointFileNumber=0
+#plotFileNumber  = 0
+nend            = 10000000
+tmax            = 6.0e-3 #0.0022
+cfl             = 0.8
+plot_var_1	= "dens"
+
+convertToConsvdInMeshInterp = .true.
+checkpointFileIntervalTime = 0.0001
+checkpointFileIntervalStep = 0
+
+
+#	AMR parameters
+nblockx	= 6
+nblocky	= 4
+#nblockz	= 2
+
+lrefine_min	= 1
+lrefine_max     = 4
+nrefs           = 2
+refine_var_1    = "dens"
+refine_var_2	= "pres"
+eintSwitch	= 1.e-6
+
+
+
+#	Flux Conservation for AMR
+flux_correct    = .true.
+
+log_file	= "hydroJet.log"
+basenm		= "jet_weno_vl_hybrid_0.8_"
+
+## -------------------------------------------------------------##
+##  SWITCHES SPECIFIC TO THE UNSPLIT STAGGERED MESH MHD SOLVER  ##
+#	I. INTERPOLATION SCHEME:
+order		= 5      # Interpolation order (First/Second order)
+slopeLimiter    = "vanLeer"   # Slope limiters (minmod, mc, vanLeer, hybrid, limited)
+LimitedSlopeBeta= 1.     # Slope parameter for the "limited" slope by Toro
+charLimiting	= .true. # Characteristic limiting vs. Primitive limiting
+use_steepening	= .false.
+use_flattening	= .true.
+use_upwindTVD	= .false.
+
+
+#	II. RIEMANN SOLVERS:
+RiemannSolver	= "hybrid"       # Roe, HLL, HLLC, HLLD, LF
+shockInstabilityFix = .false. # Carbuncle instability fix for the Roe solver
+entropy         = .true.     # Entropy fix for the Roe solver
+EOSforRiemann	= .false.
+avisc		= .true.
+cvisc		= 0.1
+
+#	III. STRONG SHOCK HANDELING SCHEME:
+shockDetect	= .false.     # Shock Detect for numerical stability
+## -------------------------------------------------------------##
+
+
+
+#	The parameters below are only necessary for the Uniform Grid
+iGridSize	= 400	#defined as nxb * iprocs
+jGridSize	= 600	#defined as nyb * jprocs
+#kGridSize	= 1	#defined as nzb * kprocs
+iProcs		= 2	#number or procs in the i direction
+jProcs		= 3	#number or procs in the j direction
+kProcs		= 1	#number or procs in the k direction
+
+# When using UG, iProcs, jProcs and kProcs must be specified.
+# These are the processors along each of the dimensions
+# FIXEDBLOCKSIZE mode ::
+#	When using fixed blocksize, iGridSize etc are redundant in
+#	runtime parameters. These quantities are calculated as 
+#	iGridSize = NXB*iprocs
+#	jGridSize = NYB*jprocs
+#	kGridSize = NZB*kprocs
+# NONFIXEDBLOCKSIZE mode ::
+#	iGridSize etc must be specified. They constitute the global
+#	number of grid points in the physical domain without taking 
+#	the guard cell into account. The local blocksize is calculated
+#	as iGridSize/iprocs  etc.
